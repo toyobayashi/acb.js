@@ -4,7 +4,7 @@
   "description": "For all your ACB extracting needs.",
   "main": "index.js",
   "bin": {
-    "acb.js": "./cli.js"
+    "acb": "./cli.js"
   },
   "repository": {
     "type": "git",

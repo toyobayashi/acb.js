@@ -8,7 +8,7 @@ For all your ACB extracting needs. Based on [acb.py](https://github.com/summertr
 
 ``` bash
 npm install acb.js -g
-acb.js somefile.acb [outputdir]
+acb somefile.acb [outputdir]
 ```
 
 ### Programing
