@@ -1,0 +1,22 @@
+{
+  "name": "acb.js",
+  "version": "1.0.0",
+  "description": "For all your ACB extracting needs.",
+  "main": "index.js",
+  "bin": {
+    "acb.js": "./cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toyobayashi/acb.js.git"
+  },
+  "author": "toyobayashi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toyobayashi/acb.js/issues"
+  },
+  "homepage": "https://github.com/toyobayashi/acb.js#readme",
+  "dependencies": {
+    "fs-extra": "^6.0.1"
+  }
+}
