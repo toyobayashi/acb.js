@@ -4,23 +4,69 @@ const UTFTable = require('./src/UTFTable.js')
 const TrackList = require('./src/TrackList.js')
 const AFSArchive = require('./src/AFSArchive.js')
 
-module.exports = function (acbFile, targetDir = path.join(path.dirname(acbFile), `_acb_${path.basename(acbFile)}`)) {
-  if (!fs.existsSync(targetDir)) fs.mkdirsSync(targetDir)
-  const wavType = {
-    0: '.adx',
-    2: '.hca',
-    7: '.at3',
-    8: '.vag',
-    9: '.bcwav',
-    13: '.dsp'
+class Acb {
+  constructor (acbFile) {
+    this.acbFile = acbFile
+    this.headerTable = new UTFTable(fs.readFileSync(this.acbFile))
+    this.trackList = new TrackList(this.headerTable)
+    this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
   }
-  let utf = new UTFTable(fs.readFileSync(acbFile))
-  let cue = new TrackList(utf)
-  let awb = new AFSArchive(utf.rows[0].AwbFile)
-  let files = awb.getFiles()
-  for (let track of cue.tracks) {
-    let name = `${track[1]}${wavType[track[3]]}`
-    if (track[2] in files) fs.writeFileSync(path.join(targetDir, name), files[track[2]])
-    else throw new Error(`id ${track[2]} not found in archive`)
+
+  extract (targetDir = path.join(path.dirname(this.acbFile), `_acb_${path.basename(this.acbFile)}`)) {
+    if (!fs.existsSync(targetDir)) fs.mkdirsSync(targetDir)
+    for (let track of this.trackList.tracks) {
+      if (track.wavId in this.awbFile.files) fs.writeFileSync(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId])
+      else throw new Error(`id ${track.wavId} not found in archive`)
+    }
+  }
+
+  getHeaderTable () {
+    return this.headerTable.rows
+  }
+
+  getCueTable () {
+    return this.trackList.cueTable.rows
+  }
+
+  getCueNameTable () {
+    return this.trackList.cueNameTable.rows
+  }
+
+  getWaveformTable () {
+    return this.trackList.waveformTable.rows
+  }
+
+  getSynthTable () {
+    return this.trackList.synthTable.rows
+  }
+
+  getFileList () {
+    let list = []
+    for (let track of this.trackList.tracks) {
+      if (track.wavId in this.awbFile.files) {
+        list.push({
+          ID: track.wavId,
+          Name: track.cueName + Acb.encodeType[track.encodeType],
+          Size: this.awbFile.files[track.wavId].length
+        })
+      }
+    }
+    return list
   }
 }
+
+Acb.encodeType = {
+  0: '.adx',
+  2: '.hca',
+  7: '.at3',
+  8: '.vag',
+  9: '.bcwav',
+  13: '.dsp'
+}
+
+Acb.extract = function (acbFile, targetDir) {
+  let acb = new Acb(acbFile)
+  acb.extract(targetDir)
+}
+
+module.exports = Acb

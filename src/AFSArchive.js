@@ -7,6 +7,7 @@ module.exports = class AFSArchive {
     this.r = new Reader(awb)
     this.length = this.r.length
     this.header = this.readHeader()
+    this.files = this.getFiles()
   }
 
   readHeader () {
@@ -31,18 +32,14 @@ module.exports = class AFSArchive {
   }
 
   getFiles () {
-    let back = this.r.tell()
     let files = {}
     for (let i = 0; i < this.header.ids.length; i++) {
       let id = this.header.ids[i]
       let start = Math.ceil(this.header.fileEndPoints[i] / this.header.alignment) * this.header.alignment
       let length = this.header.fileEndPoints[i + 1] - start
-      this.r.seek(start)
-      let buf = this.r.read(length)
-      // let buf = this.r.buf.slice(start, this.header.fileEndPoints[i + 1])
+      let buf = this.r.buf.slice(start, this.header.fileEndPoints[i + 1])
       files[id] = buf
     }
-    this.r.seek(back)
     return files
   }
 }

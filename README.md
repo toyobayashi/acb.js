@@ -8,12 +8,13 @@ For all your ACB extracting needs. Based on [acb.py](https://github.com/summertr
 
 ``` bash
 npm install acb -g
-acb somefile.acb [outputdir]
+acb somefile.acb [-o [outputdir]] [-l] [-t] [-c] [-n] [-w] [-s]
 ```
 
 ### Programing
 
 ``` js
-const extractACB = require('acb')
-extractACB('path/to/somefile.acb', outputdir /* = 'path/to/_acb_somefile.acb' */)
+const Acb = require('acb')
+let acb = new Acb('path/to/somefile.acb')
+acb.extract(/* outputdir */)
 ```

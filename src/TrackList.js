@@ -2,10 +2,10 @@ const UTFTable = require('./UTFTable.js')
 
 module.exports = class TrackList {
   constructor(utf) {
-    let cues = new UTFTable(utf.rows[0].CueTable)
-    let nams = new UTFTable(utf.rows[0].CueNameTable)
-    let wavs = new UTFTable(utf.rows[0].WaveformTable)
-    let syns = new UTFTable(utf.rows[0].SynthTable)
+    let cues = this.cueTable = new UTFTable(utf.rows[0].CueTable)
+    let nams = this.cueNameTable = new UTFTable(utf.rows[0].CueNameTable)
+    let wavs = this.waveformTable = new UTFTable(utf.rows[0].WaveformTable)
+    let syns = this.synthTable = new UTFTable(utf.rows[0].SynthTable)
 
     this.tracks = []
 
@@ -22,13 +22,19 @@ module.exports = class TrackList {
       let referenceItems = syns.rows[row.ReferenceIndex].ReferenceItems
       let [a, b] = [referenceItems.readUInt16BE(0), referenceItems.readUInt16BE(2)]
 
-      let wavId = wavs.rows[b].Id
+      let wavId = wavs.rows[b] && wavs.rows[b].Id
       if (wavId === void 0) wavId = wavs.rows[b].MemoryAwbId
 
       let encodeType = wavs.rows[b].EncodeType
       let streaming = wavs.rows[b].Streaming
 
-      this.tracks.push([row.CueId, nameMap[ind] || 'UNKNOWN', wavId, encodeType, streaming])
+      this.tracks.push({
+        cueId: row.CueId,
+        cueName: nameMap[ind] || 'UNKNOWN',
+        wavId,
+        encodeType,
+        streaming
+      })
     }
   }
 }
