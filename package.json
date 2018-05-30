@@ -1,10 +1,10 @@
 {
   "name": "acb",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "For all your ACB extracting needs.",
   "main": "index.js",
   "bin": {
-    "acb": "./cli.js"
+    "acb": "./acb.js"
   },
   "repository": {
     "type": "git",

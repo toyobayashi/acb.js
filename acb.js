@@ -8,7 +8,7 @@ const Acb = require('.')
 let output = true
 
 program
-  .version('1.1.0', '-v, --version')
+  .version('1.1.1', '-v, --version')
   .usage('<somefile.acb> [options]')
   .option('-o, --outputDir [targetDir]', 'specify output directory')
   .option('-l, --list', 'list files')
