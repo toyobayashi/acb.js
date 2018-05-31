@@ -6,13 +6,13 @@ const AFSArchive = require('./src/AFSArchive.js')
 
 class Acb {
   constructor (acbFile) {
-    this.acbFile = acbFile
-    this.headerTable = new UTFTable(fs.readFileSync(this.acbFile))
+    this.path = acbFile
+    this.headerTable = new UTFTable(fs.readFileSync(this.path))
     this.trackList = new TrackList(this.headerTable)
     this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
   }
 
-  extract (targetDir = path.join(path.dirname(this.acbFile), `_acb_${path.basename(this.acbFile)}`)) {
+  extract (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {
     if (!fs.existsSync(targetDir)) fs.mkdirsSync(targetDir)
     for (let track of this.trackList.tracks) {
       if (track.wavId in this.awbFile.files) fs.writeFileSync(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId])
