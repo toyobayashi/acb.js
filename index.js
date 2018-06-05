@@ -12,12 +12,32 @@ class Acb {
     this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
   }
 
-  extract (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {
-    if (!fs.existsSync(targetDir)) fs.mkdirsSync(targetDir)
+  extractSync (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {
+    fs.mkdirsSync(targetDir)
     for (let track of this.trackList.tracks) {
       if (track.wavId in this.awbFile.files) fs.writeFileSync(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId])
       else throw new Error(`id ${track.wavId} not found in archive`)
     }
+  }
+
+  extract (targetDir, callback) {
+    if (!targetDir) targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
+    if (typeof targetDir === 'function') {
+      callback = targetDir
+      targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
+    }
+    
+    let promise = fs.mkdirs(targetDir).then(() => {
+      let task = []
+      for (let track of this.trackList.tracks) {
+        if (track.wavId in this.awbFile.files) task.push(fs.writeFile(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId]))
+        else throw new Error(`id ${track.wavId} not found in archive`)
+      }
+      return Promise.all(task)
+    })
+
+    if (typeof callback !== 'function') return promise
+    else promise.then(() => callback())
   }
 
   getHeaderTable () {
@@ -64,9 +84,18 @@ Acb.encodeType = {
   13: '.dsp'
 }
 
-Acb.extract = function (acbFile, targetDir) {
+Acb.extractSync = function (acbFile, targetDir) {
   let acb = new Acb(acbFile)
-  acb.extract(targetDir)
+  acb.extractSync(targetDir)
+}
+
+Acb.extract = function (acbFile, targetDir, callback) {
+  if (typeof targetDir === 'function') {
+    callback = targetDir
+    targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
+  }
+  let acb = new Acb(acbFile)
+  return acb.extract(targetDir, callback)
 }
 
 module.exports = Acb

@@ -132,7 +132,10 @@ declare class Acb {
   awbFile: AFSArchive
   constructor (acbFile: string)
 
-  extract (targetDir?: string): void
+  extract (targetDir?: string | null): Promise<void[]>
+  extract (callback: () => void): void
+  extract (targetDir: string | undefined | null, callback: () => void): void
+  extractSync (targetDir?: string | null): void
 
   getHeaderTable (): TableRow
   getCueTable (): TableRow
@@ -154,7 +157,10 @@ declare class Acb {
     13: '.dsp'
   }
 
-  static extract (acbFile: string, targetDir?: string): void
+  static extract (acbFile: string, targetDir?: string | null): Promise<void[]>
+  static extract (acbFile: string, callback: () => void): void
+  static extract (acbFile: string, targetDir: string | undefined | null, callback: () => void): void
+  static extractSync (acbFile: string, targetDir?: string | null): void
 }
 
 export = Acb

@@ -8,7 +8,7 @@ const Acb = require('.')
 let output = true
 
 program
-  .version('1.1.3', '-v, --version')
+  .version('1.1.4', '-v, --version')
   .usage('<somefile.acb> [options]')
   .option('-o, --outputDir [targetDir]', 'specify output directory')
   .option('-l, --list', 'list files')
@@ -81,9 +81,12 @@ if (program.synth) {
 
 if (output) {
   acb.extract(program.outputDir === true ? void 0 : program.outputDir)
+    .then(() => console.log('Extract done.'))
+    .catch(err => console.log(err))
 } else {
   if (program.outputDir) {
     acb.extract(program.outputDir === true ? void 0 : program.outputDir)
+      .then(() => console.log('Extract done.'))
+      .catch(err => console.log(err))
   }
 }
-
