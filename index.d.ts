@@ -162,5 +162,5 @@ declare class Acb {
   static extract (acbFile: string, targetDir: string | undefined | null, callback: () => void): void
   static extractSync (acbFile: string, targetDir?: string | null): void
 }
-
+declare namespace Acb {}
 export = Acb

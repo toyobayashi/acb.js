@@ -100,9 +100,9 @@ module.exports = class Reader {
     for (let i = 7; i >= 0; i--) {
       na.push(b[i])
     }
-    let b = parseInt(Buffer.from(na).toString('hex'), 16).toString(2)
-    let f = b[0] === '0' ? 1 : -1
-    let n = f * parseInt(b.substr(1), 2)
+    let e = parseInt(Buffer.from(na).toString('hex'), 16).toString(2)
+    let f = e[0] === '0' ? 1 : -1
+    let n = f * parseInt(e.substr(1), 2)
     this.pos += 8
     return n
   }
