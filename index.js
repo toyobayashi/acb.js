@@ -3,6 +3,7 @@ const path = require('path')
 const UTFTable = require('./src/UTFTable.js')
 const TrackList = require('./src/TrackList.js')
 const AFSArchive = require('./src/AFSArchive.js')
+const Reader = require('./src/Reader.js')
 
 class Acb {
   constructor (acbFile) {
@@ -99,3 +100,4 @@ Acb.extract = function (acbFile, targetDir, callback) {
 }
 
 module.exports = Acb
+module.exports.Reader = Reader
