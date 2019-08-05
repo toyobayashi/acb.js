@@ -1,5 +1,7 @@
 # acb.js
 
+[![Build status](https://travis-ci.com/toyobayashi/acb.js.svg?branch=master)](https://travis-ci.com/toyobayashi/acb.js/)
+
 For all your ACB extracting needs. Based on [acb.py](https://github.com/summertriangle-dev/acb.py).
 
 ## Usage

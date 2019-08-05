@@ -1,0 +1,24 @@
+language: node_js
+node_js:
+  - 12.4.0
+os:
+  - windows
+  - linux
+  - osx
+before_install:
+  - node -v
+  - npm -v
+install:
+  - npm install
+script:
+  - npm test
+deploy:
+  provider: npm
+  email: lifenglin314@outlook.com
+  api_key:
+    secure: uqXimz08CO48f6G0PQ+AehKXg7H3QifjC+DBW97a/lGhC5hd/G+Jg3bZMiF4F1jvYAcOE0S6N6IW63FBcDaPvbd5wKRWBukYChrNqGceJTGo49AbZ1M4+e69oSlMFbyAk4OkFya463AfV0jqf2/gOK9V++ysFtyzmhDp6H06f50rXqDqRI0x7b+FiQf2f1d7fGeAkPYe6CGNwHHeZFx0V73UwvK5bfpO2DRPDj+QQKLWSfWHYjytEbcjxivuppDdJSre6DfRz1oxgkymOiBYvyYYuOxg/DF5CGq/hNrN6L5wkkF4FkPAvqUONP8FEyAj+OEeFMpv7giJDpzGCVnXPMUS7H7CeowzHZuaeXZCeyENoR/Vmqs83HwWGzlDKupzg+VDRFguGEfgYnrWf7wXWAqqLIFY3f14J/6RFnMZ1zkUeuuvaAoFj+MsMKbQfKFQ6v++KyAf6UPpFlAiYZlllzLDXovasVHBoG607IILQ347kWgp+ufOnyxRd0Y9HqOnd+06my/LLNBwXfBGrfcmJ0H9FNxqE4zAP5Kcysr/Qan2W/9daPb5zxV+Lnm2CixLID3lFoIp1qDxGc/YuHvz4d5raaFNsWM/Egxf7KSDSsKDqhKgLSv7MEJlrmwHjbIdzPArQtUcX5o6LVOlzjShTOiLjxnZSmnx0bLCP7NAf5A=
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: toyobayashi/acb.js
+    condition: $TRAVIS_OS_NAME = linux
