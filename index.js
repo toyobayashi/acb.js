@@ -10,7 +10,11 @@ class Acb {
     this.path = acbFile
     this.headerTable = new UTFTable(fs.readFileSync(this.path))
     this.trackList = new TrackList(this.headerTable)
-    this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
+    if (!this.headerTable.rows[0].AwbFile || !this.headerTable.rows[0].AwbFile.length) {
+      this.awbFile = new AFSArchive(fs.readFileSync(path.join(path.dirname(acbFile), path.basename(acbFile, '.acb') + '.awb')))
+    } else {
+      this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
+    }
   }
 
   extractSync (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {

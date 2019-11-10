@@ -23,10 +23,10 @@ module.exports = class TrackList {
       let [a, b] = [referenceItems.readUInt16BE(0), referenceItems.readUInt16BE(2)]
 
       let wavId = wavs.rows[b] && wavs.rows[b].Id
-      if (wavId === void 0) wavId = wavs.rows[b].MemoryAwbId
-
       let encodeType = wavs.rows[b].EncodeType
       let streaming = wavs.rows[b].Streaming
+
+      if (wavId === void 0) wavId = streaming ? wavs.rows[b].StreamAwbId : wavs.rows[b].MemoryAwbId
 
       this.tracks.push({
         cueId: row.CueId,
