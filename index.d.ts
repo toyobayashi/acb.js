@@ -137,7 +137,7 @@ export declare class Acb {
   headerTable: UTFTable
   trackList: TrackList
   awbFile: AFSArchive
-  constructor (acbFile: string)
+  constructor (acbFile: string | Buffer, awbFile?: string | Buffer)
 
   extract (targetDir?: string | null): Promise<void[]>
   extract (callback: () => void): void

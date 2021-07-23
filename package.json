@@ -1,6 +1,6 @@
 {
   "name": "acb",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "For all your ACB extracting needs.",
   "main": "index.js",
   "typings": "index.d.ts",

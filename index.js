@@ -9,18 +9,38 @@ const AFSArchive = require('./src/AFSArchive.js')
 const Reader = require('./src/Reader.js')
 
 class Acb {
-  constructor (acbFile) {
-    this.path = acbFile
-    this.headerTable = new UTFTable(fs.readFileSync(this.path))
+  constructor (acbFile, awbFile) {
+    if (!((typeof acbFile === 'string' && acbFile) || Buffer.isBuffer(acbFile))) {
+      throw new TypeError('acbFile should be string | Buffer')
+    }
+    this.path = typeof acbFile === 'string' ? acbFile : ''
+    this.headerTable = new UTFTable(this.path ? fs.readFileSync(this.path) : acbFile)
     this.trackList = new TrackList(this.headerTable)
     if (!this.headerTable.rows[0].AwbFile || !this.headerTable.rows[0].AwbFile.length) {
-      this.awbFile = new AFSArchive(fs.readFileSync(path.join(path.dirname(acbFile), path.basename(acbFile, '.acb') + '.awb')))
+      let awbPath = ''
+      if (!awbFile) {
+        if (typeof acbFile === 'string') {
+          awbPath = path.join(path.dirname(acbFile), path.basename(acbFile, '.acb') + '.awb')
+        } else {
+          throw new TypeError('awbFile should be string | Buffer')
+        }
+      } else {
+        if (typeof awbFile === 'string') {
+          awbPath = awbFile
+        } else {
+          if (!Buffer.isBuffer(awbFile)) {
+            throw new TypeError('awbFile should be string | Buffer')
+          }
+        }
+      }
+      this.awbFile = new AFSArchive(awbPath ? fs.readFileSync(awbPath) : awbFile)
     } else {
       this.awbFile = new AFSArchive(this.headerTable.rows[0].AwbFile)
     }
   }
 
-  extractSync (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {
+  extractSync (targetDir = this.path ? path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`) : '') {
+    if (!targetDir) throw new TypeError('Empty targetDir')
     fs.mkdirSync(targetDir, { recursive: true })
     for (let track of this.trackList.tracks) {
       if (track.wavId in this.awbFile.files) fs.writeFileSync(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId])
@@ -29,10 +49,15 @@ class Acb {
   }
 
   extract (targetDir, callback) {
-    if (!targetDir) targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
+    const dir = this.path ? path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`) : ''
+    if (!targetDir) {
+      if (!dir) throw new TypeError('Empty targetDir')
+      targetDir = dir
+    }
     if (typeof targetDir === 'function') {
       callback = targetDir
-      targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
+      if (!dir) throw new TypeError('Empty targetDir')
+      targetDir = dir
     }
     
     let promise = fs.promises.mkdir(targetDir, { recursive: true }).then(() => {

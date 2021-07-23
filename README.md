@@ -17,7 +17,9 @@ acb somefile.acb [-o [outputdir]] [-l] [-t] [-c] [-n] [-w] [-s]
 
 ``` js
 const { Acb } = require('acb')
-let acb = new Acb('path/to/somefile.acb')
+const acb = new Acb('path/to/somefile.acb')
+// or
+// const acb = new Acb(fs.readFileSync('path/to/somefile.acb'), awbFilePathOrBuffer)
 
 // Async
 acb.extract() // => Promise
