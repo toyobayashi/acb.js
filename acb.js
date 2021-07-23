@@ -4,11 +4,11 @@ const util = require('util')
 const program = require('commander')
 const columnify = require('columnify')
 
-const Acb = require('.')
+const Acb = require('.').Acb
 let output = true
 
 program
-  .version('1.2.5', '-v, --version')
+  .version(require('./package.json').version, '-v, --version')
   .usage('<somefile.acb> [options]')
   .option('-o, --outputDir [targetDir]', 'specify output directory')
   .option('-l, --list', 'list files')
@@ -25,9 +25,16 @@ if (program.args.length < 1) {
 
 let acb = new Acb(program.args[0])
 
-if (program.list) {
+const opts = program.opts()
+
+if (opts.list) {
   output = false
-  console.log(columnify(acb.getFileList(), {
+  const list = acb.getFileList()
+  console.log(columnify(list.map(row => ({
+    ID: row.id,
+    Name: row.name,
+    Size: row.buffer.length
+  })), {
     minWidth: 25,
     config: {
       ID: { minWidth: 5, maxWidth: 5 },
@@ -36,17 +43,17 @@ if (program.list) {
   }))
 }
 
-if (program.header) {
+if (opts.header) {
   output = false
   console.log(acb.getHeaderTable())
 }
 
-if (program.cue) {
+if (opts.cue) {
   output = false
   console.log(columnify(acb.getCueTable()))
 }
 
-if (program.cueName) {
+if (opts.cueName) {
   output = false
   console.log(columnify(acb.getCueNameTable(), {
     minWidth: 25,
@@ -56,14 +63,14 @@ if (program.cueName) {
   }))
 }
 
-if (program.waveform) {
+if (opts.waveform) {
   output = false
   console.log(columnify(acb.getWaveformTable(), {
     minWidth: 4,
   }))
 }
 
-if (program.synth) {
+if (opts.synth) {
   output = false
   console.log(columnify(acb.getSynthTable(), {
     maxWidth: 10,
@@ -80,12 +87,12 @@ if (program.synth) {
 }
 
 if (output) {
-  acb.extract(program.outputDir === true ? void 0 : program.outputDir)
+  acb.extract(opts.outputDir === true ? void 0 : opts.outputDir)
     .then(() => console.log('Extract done.'))
     .catch(err => console.log(err))
 } else {
-  if (program.outputDir) {
-    acb.extract(program.outputDir === true ? void 0 : program.outputDir)
+  if (opts.outputDir) {
+    acb.extract(opts.outputDir === true ? void 0 : opts.outputDir)
       .then(() => console.log('Extract done.'))
       .catch(err => console.log(err))
   }

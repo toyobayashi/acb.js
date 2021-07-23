@@ -1,6 +1,6 @@
-type TableRow = { [key: string]: any }[]
-type TableColumn = ([string, string] | [string, string, any])[]
-type AcbHeader = {
+export declare type TableRow = { [key: string]: any }[]
+export declare type TableColumn = ([string, string] | [string, string, any])[]
+export declare type AcbHeader = {
   u1: number
   tableDataOffset: number
   stringDataOffset: number
@@ -10,7 +10,7 @@ type AcbHeader = {
   rowTotalByte: number
   rowLength: number
 }
-type AwbHeader = {
+export declare type AwbHeader = {
   offsetSize: number
   fileCount: number
   alignment: number
@@ -18,7 +18,7 @@ type AwbHeader = {
   fileEndPoints: number[]
 }
 
-declare class Reader {
+export declare class Reader {
   buf: Buffer
   pos: number
   length: number
@@ -49,8 +49,7 @@ declare class Reader {
   readUIntLE (byteLength: number): number
 }
 
-declare class UTFTable {
-  
+export declare class UTFTable {
   r: Reader
   length: number
   header: AcbHeader
@@ -100,7 +99,7 @@ declare class UTFTable {
   }
 }
 
-declare class AFSArchive {
+export declare class AFSArchive {
   r: Reader
   length: number
   header: AwbHeader
@@ -111,21 +110,29 @@ declare class AFSArchive {
   getFiles (): { [x: string]: Buffer }
 }
 
-declare class TrackList {
+export declare interface Track {
+  cueId: number
+  cueName: string
+  wavId: number
+  encodeType: number
+  streaming: number
+}
+
+export declare class TrackList {
   cueTable: UTFTable
   cueNameTable: UTFTable
   waveformTable: UTFTable
   synthTable: UTFTable
-  tracks: {
-    cueId: number
-    cueName: string
-    wavId: number
-    encodeType: number
-    streaming: number
-  }[]
+  tracks: Track[]
 }
 
-declare class Acb {
+export declare interface Entry {
+  id: number
+  name: string
+  buffer: Buffer
+}
+
+export declare class Acb {
   path: string
   headerTable: UTFTable
   trackList: TrackList
@@ -142,11 +149,7 @@ declare class Acb {
   getCueNameTable (): TableRow
   getWaveformTable (): TableRow
   getSynthTable (): TableRow
-  getFileList (): {
-    ID: any;
-    Name: any;
-    Size: any;
-  }[]
+  getFileList (): Entry[]
 
   static encodeType: {
     0: '.adx',
@@ -161,7 +164,4 @@ declare class Acb {
   static extract (acbFile: string, callback: () => void): void
   static extract (acbFile: string, targetDir: string | undefined | null, callback: () => void): void
   static extractSync (acbFile: string, targetDir?: string | null): void
-  static Reader: typeof Reader
 }
-declare namespace Acb {}
-export = Acb

@@ -1,4 +1,7 @@
-const fs = require('fs-extra')
+'use strict'
+Object.defineProperty(exports, '__esModule', { value: true })
+
+const fs = require('fs')
 const path = require('path')
 const UTFTable = require('./src/UTFTable.js')
 const TrackList = require('./src/TrackList.js')
@@ -18,7 +21,7 @@ class Acb {
   }
 
   extractSync (targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)) {
-    fs.mkdirsSync(targetDir)
+    fs.mkdirSync(targetDir, { recursive: true })
     for (let track of this.trackList.tracks) {
       if (track.wavId in this.awbFile.files) fs.writeFileSync(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId])
       else throw new Error(`id ${track.wavId} not found in archive`)
@@ -32,10 +35,10 @@ class Acb {
       targetDir = path.join(path.dirname(this.path), `_acb_${path.basename(this.path)}`)
     }
     
-    let promise = fs.mkdirs(targetDir).then(() => {
+    let promise = fs.promises.mkdir(targetDir, { recursive: true }).then(() => {
       let task = []
       for (let track of this.trackList.tracks) {
-        if (track.wavId in this.awbFile.files) task.push(fs.writeFile(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId]))
+        if (track.wavId in this.awbFile.files) task.push(fs.promises.writeFile(path.join(targetDir, `${track.cueName}${Acb.encodeType[track.encodeType]}`), this.awbFile.files[track.wavId]))
         else throw new Error(`id ${track.wavId} not found in archive`)
       }
       return Promise.all(task)
@@ -70,9 +73,9 @@ class Acb {
     for (let track of this.trackList.tracks) {
       if (track.wavId in this.awbFile.files) {
         list.push({
-          ID: track.wavId,
-          Name: track.cueName + Acb.encodeType[track.encodeType],
-          Size: this.awbFile.files[track.wavId].length
+          id: track.wavId,
+          name: track.cueName + Acb.encodeType[track.encodeType],
+          buffer: this.awbFile.files[track.wavId]
         })
       }
     }
@@ -103,5 +106,8 @@ Acb.extract = function (acbFile, targetDir, callback) {
   return acb.extract(targetDir, callback)
 }
 
-module.exports = Acb
-module.exports.Reader = Reader
+exports.Acb = Acb
+exports.Reader = Reader
+exports.UTFTable = UTFTable
+exports.TrackList = TrackList
+exports.AFSArchive = AFSArchive

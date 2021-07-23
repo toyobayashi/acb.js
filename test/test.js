@@ -1,6 +1,6 @@
-const Acb = require('..')
+const Acb = require('..').Acb
 const assert = require('assert')
-const fs = require('fs-extra')
+const fs = require('fs')
 const path = require('path')
 
 describe('Acb', function () {
