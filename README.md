@@ -16,7 +16,7 @@ acb somefile.acb [-o [outputdir]] [-l] [-t] [-c] [-n] [-w] [-s]
 ### Programing
 
 ``` js
-const Acb = require('acb')
+const { Acb } = require('acb')
 let acb = new Acb('path/to/somefile.acb')
 
 // Async
